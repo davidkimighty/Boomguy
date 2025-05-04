@@ -1,0 +1,16 @@
+{
+    "name": "USHER.Sample.BasicPlayer",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a38c78dd8553ab241ad1c8e49d0bd2b1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
