@@ -18,6 +18,12 @@ namespace USHER
                 false, _defaultCapacity, _maxCapacity);
         }
 
+        public void PlayOnce(SoundPreset soundPreset)
+        {
+            SoundPlayer soundPlayer = _pool.Get();
+            soundPlayer.PlayAndRelease(soundPreset);
+        }
+        
         public SoundPlayer Play(SoundPreset soundPreset, bool loop = false)
         {
             SoundPlayer soundPlayer = _pool.Get();
@@ -25,12 +31,14 @@ namespace USHER
             return soundPlayer;
         }
 
-        public SoundPlayer PlayRandom(SoundPreset[] soundPresets, bool loop = false)
+        public SoundPlayer GetSoundPlayer()
         {
-            SoundPlayer soundPlayer = _pool.Get();
-            SoundPreset randomPick = soundPresets[Random.Range(0, soundPresets.Length - 1)];
-            soundPlayer.Play(randomPick, loop);
-            return soundPlayer;
+            return _pool.Get();
+        }
+
+        public void SetVolume(string groupName, float value01)
+        {
+            _audioMixer.SetFloat(groupName, SoundUtils.GetDecibel(value01));
         }
 
         private SoundPlayer CreatePoolItem()

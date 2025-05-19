@@ -10,5 +10,6 @@ namespace USHER
         public AudioMixerGroup AudioMixerGroup;
         [Range(0f, 1f)] public float Volume = 1f;
         [Range(-3f, 3f)] public float Pitch = 1f;
+        [Range(0f, 1f)] public float SpatialBlend = 1f;
     }
 }

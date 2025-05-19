@@ -10,8 +10,8 @@
   },
   "samples": [
     {
-      "displayName": "Basic Audio Player",
-      "path": "Samples~/AudioPlayer"
+      "displayName": "Simple Audio Player",
+      "path": "Samples~/SimpleAudioPlayer"
     }
   ]
 }
