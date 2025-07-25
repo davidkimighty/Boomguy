@@ -3,9 +3,9 @@
 <br />
 
 <div align="center">
-  <h1 align="center">USHER</h1>
+  <h1 align="center">Boomguy</h1>
   <p align="center">
-    Unity Sound HandlER.
+    Simple audio player for Unity
   </p>
 </div>
 <br />
