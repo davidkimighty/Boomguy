@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace USHER
+namespace Boomguy
 {
     public static class SoundUtils
     {

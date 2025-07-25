@@ -3,20 +3,20 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace USHER
+namespace Boomguy
 {
     public enum SoundActions { Play, Pause, Stop }
     
-    public class SoundPlayer : MonoBehaviour
+    public class AudioPlayer : MonoBehaviour
     {
         private AudioSource _audioSource;
-        private IObjectPool<SoundPlayer> _pool;
+        private IObjectPool<AudioPlayer> _pool;
         private bool _isPlaying;
         private IEnumerator _waitCoroutine;
 
         public bool IsPlaying => _isPlaying;
 
-        public void Initialize(IObjectPool<SoundPlayer> pool)
+        public void Initialize(IObjectPool<AudioPlayer> pool)
         {
             _audioSource = gameObject.AddComponent<AudioSource>();
             _pool = pool;
@@ -30,7 +30,7 @@ namespace USHER
             _pool.Release(this);
         }
         
-        public void SetupClip(SoundPreset preset, bool loop = false)
+        public void SetupClip(AudioPreset preset, bool loop = false)
         {
             _audioSource.clip = preset.Clip;
             _audioSource.outputAudioMixerGroup = preset.AudioMixerGroup;
@@ -40,7 +40,7 @@ namespace USHER
             _audioSource.loop = loop;
         }
 
-        public void Play(SoundPreset preset, bool loop)
+        public void Play(AudioPreset preset, bool loop)
         {
             if (_waitCoroutine != null)
                 StopCoroutine(_waitCoroutine);
@@ -53,7 +53,7 @@ namespace USHER
             _isPlaying = true;
         }
         
-        public void PlayAndRelease(SoundPreset preset)
+        public void PlayAndRelease(AudioPreset preset)
         {
             if (_waitCoroutine != null)
                 StopCoroutine(_waitCoroutine);
@@ -69,7 +69,7 @@ namespace USHER
             StartCoroutine(_waitCoroutine);
         }
         
-        public void PlayOneShot(SoundPreset preset)
+        public void PlayOneShot(AudioPreset preset)
         {
             SetupClip(preset);
             _audioSource.PlayOneShot(preset.Clip);

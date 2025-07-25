@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 468f5dce3a02ed143ba472832fa39bc3, type: 3}
+  m_Script: {fileID: 11500000, guid: 0496431e5171a9e4592f6b77dcc2b71d, type: 3}
   m_Name: Sound_Q3_4
   m_EditorClassIdentifier: 
   Clip: {fileID: 8300000, guid: 9ec1580b34de1496aa8f68287e95d091, type: 3}
   AudioMixerGroup: {fileID: -9002409420600538122, guid: 2dd73a0012e333a46b0c65e64a4ca99d, type: 2}
   Volume: 1
   Pitch: 1
+  SpatialBlend: 1

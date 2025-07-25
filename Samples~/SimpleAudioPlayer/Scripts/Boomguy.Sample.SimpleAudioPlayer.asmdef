@@ -1,0 +1,17 @@
+{
+    "name": "Boomguy.Sample.SimpleAudioPlayer",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a38c78dd8553ab241ad1c8e49d0bd2b1",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

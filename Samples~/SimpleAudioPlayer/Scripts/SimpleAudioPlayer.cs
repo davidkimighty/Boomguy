@@ -1,16 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
-using USHER;
+using Boomguy;
 
 public class SimpleAudioPlayer : MonoBehaviour
 {
-    public SoundController SoundController;
-    public SoundPreset BackgroundMusic;
-    public SoundPreset[] KeyboardSounds;
+    public AudioController SoundController;
+    public AudioPreset BackgroundMusic;
+    public AudioPreset[] KeyboardSounds;
 
     public Slider VolumeSlider;
 
-    private SoundPlayer _backgroundPlayer;
+    private AudioPlayer _backgroundPlayer;
 
     private void Start()
     {

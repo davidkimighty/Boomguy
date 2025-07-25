@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace USHER
+namespace Boomguy
 {
-    [CreateAssetMenu(fileName = "Sound", menuName = "USHER/Preset/Sound")]
-    public class SoundPreset : ScriptableObject
+    [CreateAssetMenu(fileName = "Audio", menuName = "Boomguy/AudioPreset")]
+    public class AudioPreset : ScriptableObject
     {
         public AudioClip Clip;
         public AudioMixerGroup AudioMixerGroup;
