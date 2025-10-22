@@ -30,16 +30,6 @@ namespace Boomguy
             _pool.Release(this);
         }
         
-        public void SetupClip(AudioPreset preset, bool loop = false)
-        {
-            _audioSource.clip = preset.Clip;
-            _audioSource.outputAudioMixerGroup = preset.AudioMixerGroup;
-            _audioSource.volume = preset.Volume;
-            _audioSource.pitch = preset.Pitch;
-            _audioSource.spatialBlend = preset.SpatialBlend;
-            _audioSource.loop = loop;
-        }
-
         public void Play(AudioPreset preset, bool loop)
         {
             if (_waitCoroutine != null)
@@ -71,8 +61,17 @@ namespace Boomguy
         
         public void PlayOneShot(AudioPreset preset)
         {
-            SetupClip(preset);
-            _audioSource.PlayOneShot(preset.Clip);
+            _audioSource.PlayOneShot(preset.Clip, preset.Volume);
+        }
+
+        public void SetupClip(AudioPreset preset, bool loop = false)
+        {
+            _audioSource.clip = preset.Clip;
+            _audioSource.outputAudioMixerGroup = preset.AudioMixerGroup;
+            _audioSource.volume = preset.Volume;
+            _audioSource.pitch = preset.Pitch;
+            _audioSource.spatialBlend = preset.SpatialBlend;
+            _audioSource.loop = loop;
         }
 
         public void SetPlayMode(SoundActions mode)

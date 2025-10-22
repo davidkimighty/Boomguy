@@ -18,17 +18,17 @@ namespace Boomguy
                 false, _defaultCapacity, _maxCapacity);
         }
 
-        public void PlayOnce(AudioPreset audioPreset)
-        {
-            AudioPlayer audioPlayer = _pool.Get();
-            audioPlayer.PlayAndRelease(audioPreset);
-        }
-        
         public AudioPlayer Play(AudioPreset audioPreset, bool loop = false)
         {
             AudioPlayer audioPlayer = _pool.Get();
             audioPlayer.Play(audioPreset, loop);
             return audioPlayer;
+        }
+
+        public void PlayOnce(AudioPreset audioPreset)
+        {
+            AudioPlayer audioPlayer = _pool.Get();
+            audioPlayer.PlayAndRelease(audioPreset);
         }
 
         public AudioPlayer GetaudioPlayer()
@@ -43,7 +43,7 @@ namespace Boomguy
 
         private AudioPlayer CreatePoolItem()
         {
-            GameObject empty = new GameObject("audioPlayer");
+            GameObject empty = new GameObject("AudioPlayer");
             empty.transform.SetParent(transform);
             AudioPlayer audioPlayer = empty.AddComponent<AudioPlayer>();
             audioPlayer.Initialize(_pool);
