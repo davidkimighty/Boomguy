@@ -9,7 +9,9 @@ namespace Boomguy
         [SerializeField] private AudioMixer _audioMixer;
         [SerializeField] private int _defaultCapacity = 10;
         [SerializeField] private int _maxCapacity = 100;
-        
+        [SerializeField] private AnimationCurve _spacialCurve;
+        [SerializeField] private float _maxDistance = 100f;
+
         private IObjectPool<AudioPlayer> _pool;
 
         private void Awake()
@@ -46,7 +48,7 @@ namespace Boomguy
             GameObject empty = new GameObject("AudioPlayer");
             empty.transform.SetParent(transform);
             AudioPlayer audioPlayer = empty.AddComponent<AudioPlayer>();
-            audioPlayer.Initialize(_pool);
+            audioPlayer.Initialize(_pool, _spacialCurve, 0.5f, _maxDistance);
             return audioPlayer;
         }
 

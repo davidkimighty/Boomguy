@@ -16,10 +16,14 @@ namespace Boomguy
 
         public bool IsPlaying => _isPlaying;
 
-        public void Initialize(IObjectPool<AudioPlayer> pool)
+        public void Initialize(IObjectPool<AudioPlayer> pool, AnimationCurve curve, float minDistance, float maxDistance)
         {
-            _audioSource = gameObject.AddComponent<AudioSource>();
             _pool = pool;
+            _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.rolloffMode = AudioRolloffMode.Custom;
+            _audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, curve);
+            _audioSource.minDistance = minDistance;
+            _audioSource.maxDistance = maxDistance;
         }
 
         public void Release()
