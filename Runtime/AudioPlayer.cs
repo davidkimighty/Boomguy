@@ -7,7 +7,7 @@ namespace Boomguy
     public class AudioPlayer
     {
         private AudioMixer _audioMixer;
-        private ObjectPool<Audio> _pool;
+        private ObjectPool<AudioEmitter> _pool;
         private float _maxDistance = 100f;
 
         public AudioPlayer(AudioMixer mixer)
@@ -21,24 +21,24 @@ namespace Boomguy
                 _pool.Dispose();
             _maxDistance = maxDistance;
 
-            _pool = new ObjectPool<Audio>(CreatePoolItem, OnTakeFromPool, OnReturnToPool, OnDestroyPoolItem,
+            _pool = new ObjectPool<AudioEmitter>(CreatePoolItem, OnTakeFromPool, OnReturnToPool, OnDestroyPoolItem,
                 false, defaultCapacity, maxCapacity);
         }
 
-        public Audio Play(AudioPreset audioPreset, bool loop = false)
+        public AudioEmitter Play(AudioPreset audioPreset, bool loop = false)
         {
-            Audio audio = _pool.Get();
+            AudioEmitter audio = _pool.Get();
             audio.Play(audioPreset, loop);
             return audio;
         }
 
         public void PlayOnce(AudioPreset audioPreset)
         {
-            Audio audio = _pool.Get();
+            AudioEmitter audio = _pool.Get();
             audio.PlayAndRelease(audioPreset);
         }
 
-        public Audio GetaudioPlayer()
+        public AudioEmitter GetaudioPlayer()
         {
             return _pool.Get();
         }
@@ -48,25 +48,25 @@ namespace Boomguy
             _audioMixer.SetFloat(groupName, SoundUtils.GetDecibel(value01));
         }
 
-        private Audio CreatePoolItem()
+        private AudioEmitter CreatePoolItem()
         {
-            Audio audio = new GameObject().AddComponent<Audio>();
+            AudioEmitter audio = new GameObject().AddComponent<AudioEmitter>();
             audio.gameObject.name = $"Audio{audio.gameObject.GetEntityId()}";
             audio.Initialize(_pool, 0.5f, _maxDistance);
             return audio;
         }
 
-        private void OnTakeFromPool(Audio audio)
+        private void OnTakeFromPool(AudioEmitter audio)
         {
             audio.gameObject.SetActive(true);
         }
         
-        private void OnReturnToPool(Audio audio)
+        private void OnReturnToPool(AudioEmitter audio)
         {
             audio.gameObject.SetActive(false);
         }
         
-        private void OnDestroyPoolItem(Audio audio)
+        private void OnDestroyPoolItem(AudioEmitter audio)
         {
             GameObject.Destroy(audio.gameObject);
         }

@@ -7,16 +7,16 @@ namespace Boomguy
 {
     public enum SoundActions { Play, Pause, Stop }
     
-    public class Audio : MonoBehaviour
+    public class AudioEmitter : MonoBehaviour
     {
         private AudioSource _audioSource;
-        private IObjectPool<Audio> _pool;
+        private IObjectPool<AudioEmitter> _pool;
         private bool _isPlaying;
         private IEnumerator _waitCoroutine;
 
         public bool IsPlaying => _isPlaying;
 
-        public void Initialize(IObjectPool<Audio> pool, float minDistance, float maxDistance)
+        public void Initialize(IObjectPool<AudioEmitter> pool, float minDistance, float maxDistance)
         {
             _pool = pool;
             _audioSource = gameObject.AddComponent<AudioSource>();

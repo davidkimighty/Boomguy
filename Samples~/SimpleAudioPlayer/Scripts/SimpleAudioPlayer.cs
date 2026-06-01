@@ -13,7 +13,7 @@ public class SimpleAudioPlayer : MonoBehaviour
     public Slider VolumeSlider;
 
     private AudioPlayer _audioPlayer;
-    private Audio _backgroundAudio;
+    private AudioEmitter _backgroundAudio;
 
     private void Start()
     {
