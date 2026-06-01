@@ -12,8 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0496431e5171a9e4592f6b77dcc2b71d, type: 3}
   m_Name: Sound_Q3_2
   m_EditorClassIdentifier: 
-  Clip: {fileID: 8300000, guid: 24a0d49a0840d426a863d2b0d672af9e, type: 3}
-  AudioMixerGroup: {fileID: -9002409420600538122, guid: 2dd73a0012e333a46b0c65e64a4ca99d, type: 2}
+  Clip: {fileID: 8300000, guid: efb6645361b1e8640b49dc168716e8be, type: 3}
+  AudioMixerGroup: {fileID: -9002409420600538122, guid: 32cb88e800665eb428f7e05a44cc5a92, type: 2}
   Volume: 1
   Pitch: 1
   SpatialBlend: 1
+  SpacialCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

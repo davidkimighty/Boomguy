@@ -12,8 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0496431e5171a9e4592f6b77dcc2b71d, type: 3}
   m_Name: Sound_Bg
   m_EditorClassIdentifier: 
-  Clip: {fileID: 8300000, guid: 5f663875a7777f74fb89532606c67ec8, type: 3}
-  AudioMixerGroup: {fileID: 5129602818108250634, guid: 2dd73a0012e333a46b0c65e64a4ca99d, type: 2}
+  Clip: {fileID: 8300000, guid: 08973031ce9fe614a9a4fdda90c8fe92, type: 3}
+  AudioMixerGroup: {fileID: 5129602818108250634, guid: 32cb88e800665eb428f7e05a44cc5a92, type: 2}
   Volume: 1
   Pitch: 1
   SpatialBlend: 1
+  SpacialCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

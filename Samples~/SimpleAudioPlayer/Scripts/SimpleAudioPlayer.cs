@@ -1,36 +1,41 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Boomguy;
+using UnityEngine.Audio;
 
 public class SimpleAudioPlayer : MonoBehaviour
 {
-    public AudioController SoundController;
+    public AudioMixer AudioMixer;
+    public AnimationCurve SpacialCurve;
     public AudioPreset BackgroundMusic;
     public AudioPreset[] KeyboardSounds;
 
     public Slider VolumeSlider;
 
-    private AudioPlayer _backgroundPlayer;
+    private AudioPlayer _audioPlayer;
+    private Audio _backgroundAudio;
 
     private void Start()
     {
-        SoundController.SetVolume("MasterVolume", VolumeSlider.value);
+        _audioPlayer = new AudioPlayer(AudioMixer);
+        _audioPlayer.Initialize(10, 30);
+        _audioPlayer.SetVolume("MasterVolume", VolumeSlider.value);
         
-        _backgroundPlayer = SoundController.Play(BackgroundMusic, true);
+        _backgroundAudio = _audioPlayer.Play(BackgroundMusic, true);
     }
 
     public void PlayPauseBackground()
     {
-        _backgroundPlayer.SetPlayMode(_backgroundPlayer.IsPlaying ? SoundActions.Pause : SoundActions.Play);
+        _backgroundAudio.SetPlayMode(_backgroundAudio.IsPlaying ? SoundActions.Pause : SoundActions.Play);
     }
 
     public void StopBackground()
     {
-        _backgroundPlayer.SetPlayMode(SoundActions.Stop);
+        _backgroundAudio.SetPlayMode(SoundActions.Stop);
     }
 
     public void ChangeVolume(float volume)
     {
-        SoundController.SetVolume("MasterVolume", volume);
+        _audioPlayer.SetVolume("MasterVolume", volume);
     }
 }

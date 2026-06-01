@@ -1,108 +1,74 @@
-using System;
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Pool;
 
 namespace Boomguy
 {
-    public enum SoundActions { Play, Pause, Stop }
-    
-    public class AudioPlayer : MonoBehaviour
+    public class AudioPlayer
     {
-        private AudioSource _audioSource;
-        private IObjectPool<AudioPlayer> _pool;
-        private bool _isPlaying;
-        private IEnumerator _waitCoroutine;
+        private AudioMixer _audioMixer;
+        private ObjectPool<Audio> _pool;
+        private float _maxDistance = 100f;
 
-        public bool IsPlaying => _isPlaying;
-
-        public void Initialize(IObjectPool<AudioPlayer> pool, AnimationCurve curve, float minDistance, float maxDistance)
+        public AudioPlayer(AudioMixer mixer)
         {
-            _pool = pool;
-            _audioSource = gameObject.AddComponent<AudioSource>();
-            _audioSource.rolloffMode = AudioRolloffMode.Custom;
-            _audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, curve);
-            _audioSource.minDistance = minDistance;
-            _audioSource.maxDistance = maxDistance;
+            _audioMixer = mixer;
         }
 
-        public void Release()
+        public void Initialize(int defaultCapacity, int maxCapacity, float maxDistance = 100f)
         {
-            _audioSource.Stop();
-            _isPlaying = false;
-            _waitCoroutine = null;
-            _pool.Release(this);
+            if (_pool != null)
+                _pool.Dispose();
+            _maxDistance = maxDistance;
+
+            _pool = new ObjectPool<Audio>(CreatePoolItem, OnTakeFromPool, OnReturnToPool, OnDestroyPoolItem,
+                false, defaultCapacity, maxCapacity);
+        }
+
+        public Audio Play(AudioPreset audioPreset, bool loop = false)
+        {
+            Audio audio = _pool.Get();
+            audio.Play(audioPreset, loop);
+            return audio;
+        }
+
+        public void PlayOnce(AudioPreset audioPreset)
+        {
+            Audio audio = _pool.Get();
+            audio.PlayAndRelease(audioPreset);
+        }
+
+        public Audio GetaudioPlayer()
+        {
+            return _pool.Get();
+        }
+
+        public void SetVolume(string groupName, float value01)
+        {
+            _audioMixer.SetFloat(groupName, SoundUtils.GetDecibel(value01));
+        }
+
+        private Audio CreatePoolItem()
+        {
+            Audio audio = new GameObject().AddComponent<Audio>();
+            audio.gameObject.name = $"Audio{audio.gameObject.GetEntityId()}";
+            audio.Initialize(_pool, 0.5f, _maxDistance);
+            return audio;
+        }
+
+        private void OnTakeFromPool(Audio audio)
+        {
+            audio.gameObject.SetActive(true);
         }
         
-        public void Play(AudioPreset preset, bool loop)
+        private void OnReturnToPool(Audio audio)
         {
-            if (_waitCoroutine != null)
-                StopCoroutine(_waitCoroutine);
-            
-            if (_audioSource.isPlaying)
-                _audioSource.Stop();
-            
-            SetupClip(preset, loop);
-            _audioSource.Play();
-            _isPlaying = true;
+            audio.gameObject.SetActive(false);
         }
         
-        public void PlayAndRelease(AudioPreset preset)
+        private void OnDestroyPoolItem(Audio audio)
         {
-            if (_waitCoroutine != null)
-                StopCoroutine(_waitCoroutine);
-            
-            if (_audioSource.isPlaying)
-                _audioSource.Stop();
-            
-            SetupClip(preset);
-            _audioSource.Play();
-            _isPlaying = true;
-            
-            _waitCoroutine = WaitForPlaying(Release);
-            StartCoroutine(_waitCoroutine);
-        }
-        
-        public void PlayOneShot(AudioPreset preset)
-        {
-            _audioSource.PlayOneShot(preset.Clip, preset.Volume);
-        }
-
-        public void SetupClip(AudioPreset preset, bool loop = false)
-        {
-            _audioSource.clip = preset.Clip;
-            _audioSource.outputAudioMixerGroup = preset.AudioMixerGroup;
-            _audioSource.volume = preset.Volume;
-            _audioSource.pitch = preset.Pitch;
-            _audioSource.spatialBlend = preset.SpatialBlend;
-            _audioSource.loop = loop;
-        }
-
-        public void SetPlayMode(SoundActions mode)
-        {
-            if (_audioSource.clip == null) return;
-
-            switch (mode)
-            {
-                case SoundActions.Play: _audioSource.Play(); break;
-                case SoundActions.Pause: _audioSource.Pause(); break;
-                case SoundActions.Stop: _audioSource.Stop(); break;
-            }
-            _isPlaying = (int)mode == 0;
-        }
-        
-        public void Mute(bool state)
-        {
-            if (_audioSource.clip == null) return;
-            
-            _audioSource.mute = state;
-        }
-
-        private IEnumerator WaitForPlaying(Action done)
-        {
-            while (_audioSource.isPlaying)
-                yield return null;
-            done?.Invoke();
+            GameObject.Destroy(audio.gameObject);
         }
     }
 }
