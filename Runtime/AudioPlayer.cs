@@ -25,17 +25,17 @@ namespace Boomguy
                 false, defaultCapacity, maxCapacity);
         }
 
-        public AudioEmitter Play(AudioPreset audioPreset, bool loop = false)
+        public AudioEmitter Play(AudioPreset audioPreset, bool loop = false, bool release = false)
         {
             AudioEmitter audio = _pool.Get();
-            audio.Play(audioPreset, loop);
+            _ = audio.Play(audioPreset, loop, release);
             return audio;
         }
 
         public void PlayOnce(AudioPreset audioPreset)
         {
             AudioEmitter audio = _pool.Get();
-            audio.PlayAndRelease(audioPreset);
+            _ = audio.Play(audioPreset, release: true);
         }
 
         public AudioEmitter GetaudioPlayer()

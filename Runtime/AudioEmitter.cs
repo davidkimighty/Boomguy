@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -12,7 +12,9 @@ namespace Boomguy
         private AudioSource _audioSource;
         private IObjectPool<AudioEmitter> _pool;
         private bool _isPlaying;
-        private IEnumerator _waitCoroutine;
+        private bool _suspended;
+        private CancellationTokenSource _waitCts;
+        private CancellationTokenSource _fadeCts;
 
         public bool IsPlaying => _isPlaying;
         public float Volume => _audioSource.volume;
@@ -28,39 +30,40 @@ namespace Boomguy
 
         public void Release()
         {
+            CancelWait();
+            CancelFade();
             _audioSource.Stop();
             _isPlaying = false;
-            _waitCoroutine = null;
+            _suspended = false;
             _pool.Release(this);
         }
         
-        public void Play(AudioPreset preset, bool loop)
+        public async Awaitable Play(AudioPreset preset, bool loop = false, bool release = false)
         {
-            if (_waitCoroutine != null)
-                StopCoroutine(_waitCoroutine);
-            
+            CancelWait();
+
             if (_audioSource.isPlaying)
                 _audioSource.Stop();
-            
+
             SetupClip(preset, loop);
             _audioSource.Play();
             _isPlaying = true;
-        }
-        
-        public void PlayAndRelease(AudioPreset preset)
-        {
-            if (_waitCoroutine != null)
-                StopCoroutine(_waitCoroutine);
-            
-            if (_audioSource.isPlaying)
-                _audioSource.Stop();
-            
-            SetupClip(preset);
-            _audioSource.Play();
-            _isPlaying = true;
-            
-            _waitCoroutine = WaitForPlaying(Release);
-            StartCoroutine(_waitCoroutine);
+            _suspended = false;
+
+            if (!release) return;
+
+            _waitCts = new CancellationTokenSource();
+            var token = _waitCts.Token;
+            try
+            {
+                while (_audioSource.isPlaying || _suspended)
+                    await Awaitable.NextFrameAsync(token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            Release();
         }
         
         public void PlayOneShot(AudioPreset preset)
@@ -88,18 +91,63 @@ namespace Boomguy
 
             switch (mode)
             {
-                case SoundActions.Play: _audioSource.Play(); break;
-                case SoundActions.Pause: _audioSource.Pause(); break;
-                case SoundActions.Stop: _audioSource.Stop(); break;
+                case SoundActions.Play: _audioSource.Play(); _suspended = false; break;
+                case SoundActions.Pause: _audioSource.Pause(); _suspended = true; break;
+                case SoundActions.Stop: _audioSource.Stop(); _suspended = true; break;
             }
-            _isPlaying = (int)mode == 0;
+            _isPlaying = mode == SoundActions.Play;
         }
 
         public void SetVolume(float volume)
         {
             _audioSource.volume = volume;
         }
-        
+
+        public async Awaitable FadeVolumeAync(float targetVolume, float duration, bool release = false)
+        {
+            CancelFade();
+            var cts = new CancellationTokenSource();
+            _fadeCts = cts;
+            var token = cts.Token;
+
+            targetVolume = Mathf.Clamp01(targetVolume);
+            bool completed = false;
+            try
+            {
+                if (duration <= 0f)
+                {
+                    _audioSource.volume = targetVolume;
+                }
+                else
+                {
+                    float startVolume = _audioSource.volume;
+                    float elapsed = 0f;
+                    while (elapsed < duration)
+                    {
+                        elapsed += Time.deltaTime;
+                        float t = Mathf.Clamp01(elapsed / duration);
+
+                        _audioSource.volume = Mathf.Lerp(startVolume, targetVolume, t);
+                        await Awaitable.NextFrameAsync(token);
+                    }
+                    _audioSource.volume = targetVolume;
+                }
+                completed = true;
+            }
+            catch (OperationCanceledException) { }
+            finally
+            {
+                if (ReferenceEquals(_fadeCts, cts))
+                {
+                    cts.Dispose();
+                    _fadeCts = null;
+                }
+            }
+
+            if (release && completed)
+                Release();
+        }
+
         public void Mute(bool state)
         {
             if (_audioSource.clip == null) return;
@@ -107,11 +155,22 @@ namespace Boomguy
             _audioSource.mute = state;
         }
 
-        private IEnumerator WaitForPlaying(Action done)
+        private void CancelWait()
         {
-            while (_audioSource.isPlaying)
-                yield return null;
-            done?.Invoke();
+            if (_waitCts == null) return;
+
+            _waitCts.Cancel();
+            _waitCts.Dispose();
+            _waitCts = null;
+        }
+
+        private void CancelFade()
+        {
+            if (_fadeCts == null) return;
+
+            _fadeCts.Cancel();
+            _fadeCts.Dispose();
+            _fadeCts = null;
         }
     }
 }
