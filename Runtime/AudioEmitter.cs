@@ -15,6 +15,7 @@ namespace Boomguy
         private IEnumerator _waitCoroutine;
 
         public bool IsPlaying => _isPlaying;
+        public float Volume => _audioSource.volume;
 
         public void Initialize(IObjectPool<AudioEmitter> pool, float minDistance, float maxDistance)
         {
