@@ -93,6 +93,11 @@ namespace Boomguy
             }
             _isPlaying = (int)mode == 0;
         }
+
+        public void SetVolume(float volume)
+        {
+            _audioSource.volume = volume;
+        }
         
         public void Mute(bool state)
         {
